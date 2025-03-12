@@ -1,5 +1,6 @@
 import pandas as pd
 import os
+from typing import List
 
 def dataloader(file_name, directory=None, **kwargs): #m
     """
@@ -48,11 +49,34 @@ def dataloader(file_name, directory=None, **kwargs): #m
         raise ValueError(f'Error loading CSV:{e}')
     
 
-def remove_zero_neg_values(): #s
+def remove_zero_neg_values(df: pd.DataFrame, columns: List[str]) -> pd.DataFrame: #S
     """
-    Removes rows where any of the specified columns contain zero or negative values
+    Removes rows where any of the specified columns contain zero or negative values.
+
+    :param df pd.DataFrame: 
+    Pandas Dataframe containing the data.
+
+    :param columns List[str]: 
+    List of column names (str) to check for negative or zero values.
+
+    :return: 
+    pd.DataFrame without the zero or negative values.
+
+    :raises ValueError: 
+    If any of the specified columns do not exist in the dataframe
     """
-    pass
+    # Find missing columns
+    missing_columns = [column for column in columns if column not in df.columns]
+
+    # Raise exception if columns are missing
+    if missing_columns:
+        raise ValueError(f"Missing columns in DataFrame: {missing_columns}")
+
+    # create a dataframe where true meand df[columns] > 0. Checks if all values are True in a row, if not, the row is removed.
+    mask = (df[columns] > 0).all(axis=1)
+
+    return df[mask]
+
 
 def remove_duplicates(df): #m
     """
@@ -68,11 +92,30 @@ def remove_duplicates(df): #m
     return df
 
 
-def remove_missing_values(): #s
+def remove_missing_values(df: pd.DataFrame) -> pd.DataFrame: #S
     """
-    Remove rows where any of the specified columns contain missing values
+    Remove rows where there is atleast one missing value. Prints a report giving the number of rows removed due to missing values.
+
+    :param df pd.DataFrame:
+    A pandas DataFrame containing the data
+
+    :return:
+    pd.DataFrame without the rows containing missing values
     """
-    pass
+    # get the initial number of rows
+    initial_rows = len(df)
+
+    # remove rows with missing values
+    df.dropna(inplace=True)
+
+    # get number of rows after removing missing values
+    removed_rows = initial_rows - len(df)
+    
+    # inform user
+    print(f"Removed {removed_rows} rows due to missing values.")
+
+    return df
+
 
 def remove_invalid_format(df, column_name, pattern): #m
     """
