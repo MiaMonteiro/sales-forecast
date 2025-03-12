@@ -152,12 +152,6 @@ def remove_invalid_format(df, column_name, pattern): #m
     return df
 
 
-def check_invalid_dates(): #s
-    """Removes entries with invalid date formats
-    """
-
-    pass
-
 def main():
     pass
 
