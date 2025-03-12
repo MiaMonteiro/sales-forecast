@@ -3,27 +3,12 @@ import os
 
 def dataloader(file_name, directory=None, **kwargs): #m
     """
-    Loads a CSV file into a pandas Dataframe
+    Loads a CSV file into a pandas DataFrame.
 
+    
     This function supports:
     - Absolute paths (e.g., `/home/user/data.csv`, `C:\\Users\\user\\data.csv`)
     - Relative paths (e.g., `data.csv`, `subfolder/data.csv`)
-
-    Parameters:
-    - file_name (str): Name of the CSV file (with the .csv extension)
-    - directory (str, optional): Directory path where the file is located. Defaults to the current working directory
-    - **kwargs: Additional arguments for pandas `read_csv()`
-
-    Returns:
-    - pd.DataFrame: Loaded Dataframe    
-
-    Raises:
-    - FileNotFoundError: If the file does not exist at the specified path
-    - ValueError: If there is an error during the CSV loading process (e.g., malformed CSV)
-
-    ##############
-
-    Loads a CSV file into a pandas DataFrame.
 
     :param file_name str: 
     Name of the CSV file (with the .csv extension).
@@ -62,8 +47,6 @@ def dataloader(file_name, directory=None, **kwargs): #m
     except Exception as e:
         raise ValueError(f'Error loading CSV:{e}')
     
-df = dataloader('Different_stores_dataset.csv', '..\\OneDrive - FCT NOVA\\Ambiente de Trabalho\\baby')
-print(df)
 
 def remove_zero_neg_values(): #s
     """
@@ -106,7 +89,22 @@ def remove_invalid_format(df, column_name, pattern): #m
 
     :return: 
     pd.DataFrame: A DataFrame with rows that don't fully match the format removed.
+
+    :raises ValueError: 
+    If the specified column does not exist in the DataFrame.
+
+    :raises TypeError: 
+    If pattern is not a string.
     """
+    # Check if the column exists in the DataFrame
+    if column_name not in df.columns:
+        raise ValueError(f"Column '{column_name}' not found in DataFrame.")
+    
+    # Ensure pattern is a string to use pd.str.fullmatch
+    if not isinstance(pattern, str):
+        raise TypeError("Pattern must be a string.")
+
+    # Filters rows where the values in the specific column don't fully match to the pattern given
     df = df[df[column_name].str.fullmatch(pattern, na=False)]
     return df
 
